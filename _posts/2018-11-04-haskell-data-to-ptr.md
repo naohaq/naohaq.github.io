@@ -157,3 +157,5 @@ type CVec3DList = Vec3DList Ptr
 ### コード例
 
 以上のテクニックを使ったコードの例をgistの [Vec3DList.hs](https://gist.github.com/naohaq/0a39e8614d288b562c47a2f67e781d2d) にあげておきます。
+
+{% gist naohaq/0a39e8614d288b562c47a2f67e781d2d %}
