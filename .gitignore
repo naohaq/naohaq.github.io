@@ -1,0 +1,8 @@
+syntax: glob
+Gemfile
+Gemfile.lock
+.bundle/*
+.sass-cache/*
+vendor/*
+_site/*
+*~
