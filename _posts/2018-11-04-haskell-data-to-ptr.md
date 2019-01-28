@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "ポインタを使ったデータ構造をHaskellの代数的データ型と相互変換したい"
-date:   2019-01-26 17:27:14 +0900
+date:   2019-01-28 16:49:58 +0900
 categories: haskell
 ---
 ### 再帰的なデータ構造
@@ -52,3 +52,41 @@ data HVec3DList =
 ```
 
 `NULL` ポインタをリストの終端に使う代わりに、 `Nothing` でリストの終端を表現してやるわけです。
+
+### 相互変換するでござる
+
+Isomorphicなデータ型をできたところで、相互に変換できなくては意味がありません。
+
+それに当たって、ポインタの先からデータを読んだりポインタの先にデータを書いたりする必要があります。
+
+ポインタの先のデータを読み書きするのには[Storable](http://hackage.haskell.org/package/base-4.12.0.0/docs/Foreign-Storable.html#t:Storable)クラスの `peek` / `poke` メソッドを使うのですが、先程定義した `Vec3DList` はまだ `Storable` のインスタンスにはなっていません。`Vec3DList` を `Storable` のインスタンスにするには、より細かいメモリ操作を使って `peek` や `poke` を定義してやらないといけません。なんだかつらみのある世界になってきました。
+
+ですが、今のGHCには[Generics](https://wiki.haskell.org/GHC.Generics)という強力な仕組みがあり、そこを自動でやらせることができます。
+
+```haskell
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE FlexibleInstances #-}
+
+module Vec3DList where
+
+import GHC.Generics (Generic)
+
+import Foreign.Storable
+import Foreign.Storable.Generic
+
+data Vec3DList =
+  Vec3DList
+  { x :: Double
+  , y :: Double
+  , z :: Double
+  , next :: Ptr Vec3DList
+  } deriving Generic
+
+deriving instance Show Vec3DList
+
+instance GStorable Vec3DList
+```
+
+
+
